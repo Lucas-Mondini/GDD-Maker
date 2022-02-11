@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Assets/GDD_Maker/UI/Maker_UI.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/GDD_Maker/UI/GDD_Root.cs" type="Script" id=2]
+[ext_resource path="res://src/GDD_Maker/UI/ViewportContainer.cs" type="Script" id=3]
+
+[node name="GDD_Root" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+margin_right = 1024.0
+margin_bottom = 600.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Camera2D" type="Camera2D" parent="ViewportContainer"]
+position = Vector2( 512, 300 )
+current = true
+
+[node name="Maker_UI" parent="ViewportContainer/Camera2D" instance=ExtResource( 1 )]
+light_mask = 524289
+margin_left = -512.0
+margin_top = -300.0
+margin_right = -512.0
+margin_bottom = -300.0
