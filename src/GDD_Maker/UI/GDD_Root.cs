@@ -10,7 +10,8 @@ public class GDD_Root : Control
         
     }
 
-        public void addTextArea(string name, SimpleTextArea textArea){
+        public void addTextArea(string name){
+        SimpleTextArea textArea = new SimpleTextArea();
 		GD.Print("Sapwning text area! " + textAreaCount++ +" - " + name );
 
 		CallDeferred("add_child", textArea.packedScene.Instance());
