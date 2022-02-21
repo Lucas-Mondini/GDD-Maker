@@ -1,6 +1,6 @@
 using Godot;
 
-public class Maker_UI : Control
+public class Maker_UI : CanvasLayer
 {
 
     [System.Obsolete]

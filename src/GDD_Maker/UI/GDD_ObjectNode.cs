@@ -27,7 +27,8 @@ public class GDD_ObjectNode : Button
 
     [System.Obsolete]
     protected void _pressed() {
-        VPC.SetPosition(reference.GetPosition());
+        VPC.SetPosition(new Vector2(reference.GetPosition().x - 200
+        , reference.GetPosition().y - 50));
     }
 
 }
