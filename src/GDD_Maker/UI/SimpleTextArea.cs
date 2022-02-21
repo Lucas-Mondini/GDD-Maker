@@ -3,10 +3,13 @@ using System;
 
 public class SimpleTextArea : Control
 {
+	[Signal]
+	public delegate void nameChanged();
 	public string path;
+	public string name;
 	public PackedScene packedScene;
 
-	public int index = 1;
+	public int index = -1;
 	private bool isMouseInside = false;
 	private bool isMouseDragBPressed = false;
 
@@ -17,7 +20,6 @@ public class SimpleTextArea : Control
 	{
 		path = "res://Assets/GDD_Maker/UI/SimpleTextArea.tscn";
 		packedScene = GD.Load<PackedScene>(path);
-
 	}
 
     private void FollowMouse() {
@@ -45,10 +47,18 @@ public class SimpleTextArea : Control
 
 		
 
-		TextEdit actionArea = this.GetNode<TextEdit>("TextEdit");
-		actionArea.Connect("gui_input", this, "InputProcess");
-		actionArea.Connect("mouse_entered", this, "mouse_entered");
-		actionArea.Connect("mouse_exited", this, "mouse_exited");
+		TextEdit textEditBody = this.GetNode<TextEdit>("TextEdit");
+		textEditBody.Connect("gui_input", this, "InputProcess");
+		textEditBody.Connect("mouse_entered", this, "mouse_entered");
+		textEditBody.Connect("mouse_exited", this, "mouse_exited");
+
+		TextEdit textEditTitle = this.GetNode<TextEdit>("Title");
+		textEditTitle.Connect("text_changed", this, "setTitleName");
+		textEditTitle.SetText(name);
+
+		SetName(name);
+		GD.Print(name);
+		
 	}
 
     [Obsolete]
@@ -66,6 +76,22 @@ public class SimpleTextArea : Control
 				isMouseDragBPressed = false;
 			}
 		}
+	}
+
+    [Obsolete]
+    private void setTitleName() {
+		TextEdit textEditTitle = this.GetNode<TextEdit>("Title");
+		string text = textEditTitle.GetText();
+
+		if (text != "")
+			this.SetName(text);
+		else {
+			this.SetName("SimpleTextArea");
+			this.GetNode<TextEdit>("Title").SetText("SimpleTextArea");
+		}
+
+		string name = this.GetName();
+		this.EmitSignal("nameChanged");
 	}
 
 	private void mouse_entered() {

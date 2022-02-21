@@ -10,12 +10,15 @@ public class GDD_Root : Control
         
     }
 
-        public void addTextArea(string name){
-        SimpleTextArea textArea = new SimpleTextArea();
-		GD.Print("Sapwning text area! " + textAreaCount++ +" - " + name );
+    [System.Obsolete]
+    public string addTextArea(string name){
+		GD.Print("Sapwning text area! " + textAreaCount +" - " + name );
+        
+        SimpleTextArea textArea = (SimpleTextArea) new SimpleTextArea().packedScene.Instance();
+        textArea.name = ("SimpleTextArea_"+textAreaCount++);
+        AddChild(textArea);
 
-		CallDeferred("add_child", textArea.packedScene.Instance());
-		//textAreaList.Add(textArea);
-
+        
+        return textArea.GetName();
 	}
 }

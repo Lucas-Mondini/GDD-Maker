@@ -5,7 +5,7 @@ public class ButtonNewTextArea: GDDMakerBaseButton
 {
 	Maker_UI owner;
 	public ButtonNewTextArea() {
-		name = "new Text Area";
+		name = "simpleTextArea";
 	}
 	public override void _Ready()
 	{
