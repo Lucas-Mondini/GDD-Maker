@@ -1,7 +1,10 @@
 using Godot;
-
 public class GDD_ObjectNode : Button
 {
+    [Signal]
+    public delegate void textAreaSelected(GDD_ObjectNode n);
+    [Signal]
+    public delegate void textAreaDeselected(GDD_ObjectNode n);
     public string path;
     public int index = 1;
 	public PackedScene packedScene;
@@ -17,18 +20,33 @@ public class GDD_ObjectNode : Button
     public override void _Ready()
     {
         reference.Connect("nameChanged", this, "changeLabelText");
+        reference.Connect("textAreaSelected", this, "TextAreaSelected");
+        reference.Connect("textAreaDeselected", this, "TextAreaDeselected");
         changeLabelText();
     }
+
+    private void TextAreaSelected() {
+		this.EmitSignal("textAreaSelected", this);
+	}
+    private void TextAreaDeselected() {
+		this.EmitSignal("textAreaDeselected", this);
+	}
 
     [System.Obsolete]
     public void changeLabelText() {
         GetNode<Label>("Label").SetText(reference.GetName());
+        this.SetName(reference.GetName());
     }
 
     [System.Obsolete]
     protected void _pressed() {
         VPC.SetPosition(new Vector2(reference.GetPosition().x - 200
         , reference.GetPosition().y - 50));
+    }
+
+    public void destroy() {
+        reference.QueueFree();
+        this.QueueFree();
     }
 
 }

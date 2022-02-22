@@ -1,7 +1,9 @@
 using Godot;
-
+using System.Collections.Generic;
 public class Maker_UI : CanvasLayer
 {
+	private GDD_ObjectNode selectedNode;
+	private List<Button> buttons;
 
     [System.Obsolete]
     public void newTextArea(string name){
@@ -10,7 +12,6 @@ public class Maker_UI : CanvasLayer
 
 
 		addButtonToVBox(name);
-		
 	}
 	
 	public override void _Ready()
@@ -25,9 +26,20 @@ public class Maker_UI : CanvasLayer
 		button.VPC = GetOwner<GDD_Root>().GetNode<GDD_ViewportContainer>("ViewportContainer");
 		if(button != null)
 			this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(button);
-
-		button = this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").GetNode<GDD_ObjectNode>("GDD_ObjectNode");
 		button.SetName(name);
-		
+
+		button.Connect("textAreaSelected", this, "textAreaSelected");
+		button.Connect("textAreaDeselected", this, "textAreaDeselected");
+
 	}
+
+	private void textAreaSelected(GDD_ObjectNode node) {
+		selectedNode = node;
+		GD.Print("nodo selecionado " + node.Name);
+	}
+
+	private void textAreaDeselected(GDD_ObjectNode node) {
+		selectedNode = null;		
+	}
+
 }

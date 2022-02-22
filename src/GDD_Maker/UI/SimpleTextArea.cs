@@ -5,6 +5,10 @@ public class SimpleTextArea : Control
 {
 	[Signal]
 	public delegate void nameChanged();
+	[Signal]
+	public delegate void textAreaSelected();
+	[Signal]
+	public delegate void textAreaDeselected();
 	public string path;
 	public string name;
 	public PackedScene packedScene;
@@ -51,14 +55,25 @@ public class SimpleTextArea : Control
 		textEditBody.Connect("gui_input", this, "InputProcess");
 		textEditBody.Connect("mouse_entered", this, "mouse_entered");
 		textEditBody.Connect("mouse_exited", this, "mouse_exited");
+		textEditBody.Connect("focus_entered", this, "TextAreaSelected");
+		textEditBody.Connect("focus_exited", this, "TextAreaDeselected");
 
 		TextEdit textEditTitle = this.GetNode<TextEdit>("Title");
 		textEditTitle.Connect("text_changed", this, "setTitleName");
+		textEditTitle.Connect("focus_entered", this, "TextAreaSelected");
+		textEditTitle.Connect("focus_exited", this, "TextAreaDeselected");
 		textEditTitle.SetText(name);
 
 		SetName(name);
 		GD.Print(name);
 		
+	}
+
+	private void TextAreaSelected() {
+		this.EmitSignal("textAreaSelected");
+	}
+	private void TextAreaDeselected() {
+		this.EmitSignal("textAreaDeselected");
 	}
 
     [Obsolete]
