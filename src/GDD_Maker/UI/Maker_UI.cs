@@ -1,9 +1,11 @@
 using Godot;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 public class Maker_UI : CanvasLayer
 {
 	private GDD_ObjectNode selectedNode;
-	private List<Button> buttons;
+
+	private int nodeCountSelect = 0;
+	private bool SelectedNewNode = false;
 
     [System.Obsolete]
     public void newTextArea(string name){
@@ -12,6 +14,10 @@ public class Maker_UI : CanvasLayer
 
 
 		addButtonToVBox(name);
+	}
+
+	public void deleteTextArea() {
+		selectedNode.destroy();
 	}
 	
 	public override void _Ready()
@@ -33,13 +39,21 @@ public class Maker_UI : CanvasLayer
 
 	}
 
-	private void textAreaSelected(GDD_ObjectNode node) {
+    [System.Obsolete]
+    private void textAreaSelected(GDD_ObjectNode node) {
+
+
 		selectedNode = node;
 		GD.Print("nodo selecionado " + node.Name);
+
+		this.GetNode<Button>("HBoxContainer/ButtonDeleteTextArea").SetDisabled(false);
 	}
 
-	private void textAreaDeselected(GDD_ObjectNode node) {
-		selectedNode = null;		
+    [System.Obsolete]
+    private void textAreaDeselected(GDD_ObjectNode node) {
+		Task.Delay(150).ContinueWith(_ => {
+			selectedNode = null;		
+			this.GetNode<Button>("HBoxContainer/ButtonDeleteTextArea").SetDisabled(true);
+		});
 	}
-
 }
