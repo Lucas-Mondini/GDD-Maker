@@ -8,6 +8,7 @@ public class GDD_ObjectNode : Button
     public string path;
     public int index = 1;
 	public PackedScene packedScene;
+    public Maker_UI parent;
     public Control reference;
     public GDD_ViewportContainer VPC;
 
@@ -19,9 +20,16 @@ public class GDD_ObjectNode : Button
     [System.Obsolete]
     public override void _Ready()
     {
+        SimpleTextArea refAsSTA = (SimpleTextArea) reference;
+        refAsSTA.nodeReference = this;
         reference.Connect("nameChanged", this, "changeLabelText");
         reference.Connect("textAreaSelected", this, "TextAreaSelected");
         reference.Connect("textAreaDeselected", this, "TextAreaDeselected");
+        reference.Connect("destroy", this, "destroy");
+
+        GetNode<Button>("Button").Connect("pressed", this, "moveToPosition");
+
+
         changeLabelText();
     }
 
@@ -39,9 +47,9 @@ public class GDD_ObjectNode : Button
     }
 
     [System.Obsolete]
-    protected void _pressed() {
-        VPC.SetPosition(new Vector2(reference.GetPosition().x - 200
-        , reference.GetPosition().y - 50));
+    protected void moveToPosition() {
+        VPC.SetPosition(new Vector2(reference.GetPosition().x - 400
+        , reference.GetPosition().y - 100));
     }
 
     public void destroy() {

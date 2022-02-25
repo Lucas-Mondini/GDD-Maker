@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class GDD_Root : Control
 {
     private int textAreaCount = 0;
-    private List<SimpleTextArea> textAreaList;
+    public List<GDD_ObjectNode> Nodes;
     public override void _Ready()
     {
         
@@ -21,4 +21,8 @@ public class GDD_Root : Control
         
         return textArea.GetName();
 	}
+
+  public List<GDD_ObjectNode> getMakerUiNodes() {
+    return Nodes;
+  }
 }

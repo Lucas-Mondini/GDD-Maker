@@ -1,8 +1,10 @@
 using Godot;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 public class Maker_UI : CanvasLayer
 {
 	private GDD_ObjectNode selectedNode;
+	private List<GDD_ObjectNode> nodes;
 
 	private int nodeCountSelect = 0;
 	private bool SelectedNewNode = false;
@@ -19,9 +21,14 @@ public class Maker_UI : CanvasLayer
 	public void deleteTextArea() {
 		selectedNode.destroy();
 	}
+
+	public List<GDD_ObjectNode> getNodes() {
+		return nodes;
+	}
 	
 	public override void _Ready()
 	{
+		nodes = new List<GDD_ObjectNode>();
 		
 	}
 
@@ -36,6 +43,9 @@ public class Maker_UI : CanvasLayer
 
 		button.Connect("textAreaSelected", this, "textAreaSelected");
 		button.Connect("textAreaDeselected", this, "textAreaDeselected");
+
+		nodes.Add(button);
+		button.parent = this;
 
 	}
 

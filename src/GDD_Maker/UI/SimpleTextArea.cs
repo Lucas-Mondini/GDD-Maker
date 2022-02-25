@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class SimpleTextArea : Control
 {
@@ -9,16 +10,26 @@ public class SimpleTextArea : Control
 	public delegate void textAreaSelected();
 	[Signal]
 	public delegate void textAreaDeselected();
+	[Signal]
+	public delegate void destroy();
 	public string path;
 	public string name;
 	public PackedScene packedScene;
 
+
+	private TextEdit textEditBody;
+	private TextEdit textEditTitle;
+
+	private List<String> signals;
+
+	
 	public int index = -1;
 	private bool isMouseInside = false;
 	private bool isMouseDragBPressed = false;
 
 	private Vector2 mouseDrag;
 	private Vector2 thisInitialPosition;
+	public GDD_ObjectNode nodeReference;
 
 	public SimpleTextArea()
 	{
@@ -49,16 +60,22 @@ public class SimpleTextArea : Control
 		this.SetPosition(new Vector2(OS.GetScreenSize().x / 3 - this.GetSize().x,
 									80));
 
+		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLinkedNode").SetDisabled(true);
+
+		GetNode<Panel>("Panel").Visible = false;
+
 		
 
-		TextEdit textEditBody = this.GetNode<TextEdit>("TextEdit");
+		textEditBody = this.GetNode<TextEdit>("TextEdit");
 		textEditBody.Connect("gui_input", this, "InputProcess");
 		textEditBody.Connect("mouse_entered", this, "mouse_entered");
 		textEditBody.Connect("mouse_exited", this, "mouse_exited");
 		textEditBody.Connect("focus_entered", this, "TextAreaSelected");
 		textEditBody.Connect("focus_exited", this, "TextAreaDeselected");
 
-		TextEdit textEditTitle = this.GetNode<TextEdit>("Title");
+
+
+		textEditTitle = this.GetNode<TextEdit>("Title");
 		textEditTitle.Connect("text_changed", this, "setTitleName");
 		textEditTitle.Connect("focus_entered", this, "TextAreaSelected");
 		textEditTitle.Connect("focus_exited", this, "TextAreaDeselected");
@@ -66,6 +83,31 @@ public class SimpleTextArea : Control
 
 		SetName(name);
 		GD.Print(name);
+	}
+
+	public void Destroy() {
+		EmitSignal("destroy");
+	}
+
+    [Obsolete]
+    public void LinkSelection() {
+		string text = textEditBody.GetSelectionText();
+		textEditBody.AddKeywordColor(text, new  Color(0.5f, 0f, 0.5f));
+
+
+		Panel p = GetNode<Panel>("Panel");
+		p.Visible = true;
+
+
+		//TODO
+		VBoxContainer vbc = p.GetNode<VBoxContainer>("ScrollContainer/VBoxContainer");
+		List<GDD_ObjectNode> on = nodeReference.parent.getNodes();
+		foreach (GDD_ObjectNode item in on)
+		{
+			vbc.AddChild(item);
+		}
+
+		GD.Print(vbc.GetChildCount());
 		
 	}
 

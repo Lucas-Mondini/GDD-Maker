@@ -1,10 +1,10 @@
 using System;
 
 
-public class ButtonNewTextArea: GDDMakerBaseButton
+public class GDD_ButtonNewTextArea: GDDMakerBaseButton
 {
 	Maker_UI owner;
-	public ButtonNewTextArea() {
+	public GDD_ButtonNewTextArea() {
 		name = "simpleTextArea";
 	}
 	public override void _Ready()
