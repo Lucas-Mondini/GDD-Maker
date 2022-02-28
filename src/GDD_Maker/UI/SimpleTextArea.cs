@@ -30,6 +30,7 @@ public class SimpleTextArea : Control
 	private Vector2 mouseDrag;
 	private Vector2 thisInitialPosition;
 	public GDD_ObjectNode nodeReference;
+	public List<Button> nodes = new List<Button>();
 
 	public SimpleTextArea()
 	{
@@ -87,6 +88,29 @@ public class SimpleTextArea : Control
 
 	public void Destroy() {
 		EmitSignal("destroy");
+		QueueFree();
+	}
+
+    [Obsolete]
+    private void updateNodes() {
+		List<GDD_ObjectNode> on = nodeReference.parent.getNodes();
+		foreach(Button b in nodes) {
+			b.QueueFree();
+		}
+		nodes.Clear();
+		foreach (GDD_ObjectNode item in on)
+		{
+			
+			Button node = new Button();
+			Label label = new Label();
+			node.AddChild(label);
+			label.SetText(item.GetName());
+
+			node.Connect("pressed", item, "moveToPosition");
+			if(item.reference != this)
+				nodes.Add(node);
+		}
+
 	}
 
     [Obsolete]
@@ -98,16 +122,14 @@ public class SimpleTextArea : Control
 		Panel p = GetNode<Panel>("Panel");
 		p.Visible = true;
 
+		updateNodes();
 
-		//TODO
-		VBoxContainer vbc = p.GetNode<VBoxContainer>("ScrollContainer/VBoxContainer");
-		List<GDD_ObjectNode> on = nodeReference.parent.getNodes();
-		foreach (GDD_ObjectNode item in on)
-		{
-			vbc.AddChild(item);
-		}
+		foreach(Button node in nodes)
+			this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(node);
 
-		GD.Print(vbc.GetChildCount());
+		
+
+		GD.Print(this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").GetChildCount());
 		
 	}
 

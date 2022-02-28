@@ -19,11 +19,22 @@ public class Maker_UI : CanvasLayer
 	}
 
 	public void deleteTextArea() {
-		selectedNode.destroy();
+		selectedNode.Destroy();
 	}
 
 	public List<GDD_ObjectNode> getNodes() {
 		return nodes;
+	}
+
+	public void removeNodeFromList(GDD_ObjectNode n) {
+
+		List<GDD_ObjectNode> l = new List<GDD_ObjectNode>();
+		foreach(GDD_ObjectNode i in nodes) {
+			if(i != n)
+				l.Add(i);
+		}
+		nodes.Clear();
+		nodes = l;
 	}
 	
 	public override void _Ready()
@@ -43,6 +54,7 @@ public class Maker_UI : CanvasLayer
 
 		button.Connect("textAreaSelected", this, "textAreaSelected");
 		button.Connect("textAreaDeselected", this, "textAreaDeselected");
+		button.Connect("destroy", this, "removeNodeFromList");
 
 		nodes.Add(button);
 		button.parent = this;

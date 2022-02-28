@@ -5,6 +5,8 @@ public class GDD_ObjectNode : Button
     public delegate void textAreaSelected(GDD_ObjectNode n);
     [Signal]
     public delegate void textAreaDeselected(GDD_ObjectNode n);
+    [Signal]
+    public delegate void destroy(GDD_ObjectNode n);
     public string path;
     public int index = 1;
 	public PackedScene packedScene;
@@ -25,7 +27,7 @@ public class GDD_ObjectNode : Button
         reference.Connect("nameChanged", this, "changeLabelText");
         reference.Connect("textAreaSelected", this, "TextAreaSelected");
         reference.Connect("textAreaDeselected", this, "TextAreaDeselected");
-        reference.Connect("destroy", this, "destroy");
+        reference.Connect("destroy", this, "Destroy");
 
         GetNode<Button>("Button").Connect("pressed", this, "moveToPosition");
 
@@ -52,8 +54,8 @@ public class GDD_ObjectNode : Button
         , reference.GetPosition().y - 100));
     }
 
-    public void destroy() {
-        reference.QueueFree();
+    public void Destroy() {
+        EmitSignal("destroy", this);
         this.QueueFree();
     }
 
