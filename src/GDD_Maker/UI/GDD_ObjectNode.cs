@@ -12,6 +12,7 @@ public class GDD_ObjectNode : Button
 	public PackedScene packedScene;
     public Maker_UI parent;
     public Control reference;
+    public Color color = new Color(1, 1 ,1);
     public GDD_ViewportContainer VPC;
 
     public GDD_ObjectNode() {
@@ -28,6 +29,8 @@ public class GDD_ObjectNode : Button
         reference.Connect("textAreaSelected", this, "TextAreaSelected");
         reference.Connect("textAreaDeselected", this, "TextAreaDeselected");
         reference.Connect("destroy", this, "Destroy");
+
+        color = (reference as SimpleTextArea).titleColor;
 
         GetNode<Button>("Button").Connect("pressed", this, "moveToPosition");
 
@@ -49,7 +52,7 @@ public class GDD_ObjectNode : Button
     }
 
     [System.Obsolete]
-    protected void moveToPosition() {
+    public void moveToPosition() {
         VPC.SetPosition(new Vector2(reference.GetPosition().x - 400
         , reference.GetPosition().y - 100));
     }
@@ -57,6 +60,10 @@ public class GDD_ObjectNode : Button
     public void Destroy() {
         EmitSignal("destroy", this);
         this.QueueFree();
+    }
+
+    public void Link() {
+        
     }
 
 }

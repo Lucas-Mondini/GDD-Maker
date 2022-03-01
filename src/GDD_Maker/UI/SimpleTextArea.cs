@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 public class SimpleTextArea : Control
 {
@@ -31,6 +32,10 @@ public class SimpleTextArea : Control
 	private Vector2 thisInitialPosition;
 	public GDD_ObjectNode nodeReference;
 	public List<Button> nodes = new List<Button>();
+	public List<SimpleTextArea> LinkedNodes = new List<SimpleTextArea>();
+	public Color titleColor = new Color(1, 1, 1);
+	public Hashtable links = new Hashtable();
+	private List<string> linkedWords = new List<string>();
 
 	public SimpleTextArea()
 	{
@@ -38,14 +43,6 @@ public class SimpleTextArea : Control
 		packedScene = GD.Load<PackedScene>(path);
 	}
 
-    private void FollowMouse() {
-		Vector2 newposition = new Vector2(
-		(GetViewport().GetMousePosition().x - mouseDrag.x + thisInitialPosition.x),
-		(GetViewport().GetMousePosition().y - mouseDrag.y + thisInitialPosition.y)
-		);
-		this.SetPosition(newposition);
-
-	}
 
     public override void _Process(float delta)
 	{
@@ -63,7 +60,7 @@ public class SimpleTextArea : Control
 
 		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLinkedNode").SetDisabled(true);
 
-		GetNode<Panel>("Panel").Visible = false;
+		hidePanel();
 
 		
 
@@ -85,11 +82,55 @@ public class SimpleTextArea : Control
 		SetName(name);
 		GD.Print(name);
 	}
+    private void FollowMouse() {
+		Vector2 newposition = new Vector2(
+		(GetViewport().GetMousePosition().x - mouseDrag.x + thisInitialPosition.x),
+		(GetViewport().GetMousePosition().y - mouseDrag.y + thisInitialPosition.y)
+		);
+		this.SetPosition(newposition);
+
+	}
 
 	public void Destroy() {
 		EmitSignal("destroy");
 		QueueFree();
 	}
+	private void hidePanel() {
+		GetNode<Panel>("Panel").Visible = false;
+	}
+
+	public void setTitleColor(Color c) {
+		textEditTitle.AddColorOverride("font_color", c);
+		titleColor = c;
+	}
+
+	public void gotLinked(Color c, SimpleTextArea from) {
+		setTitleColor(c);
+		LinkedNodes.Add(from);
+	}
+
+    [Obsolete]
+    private void LinkNode(SimpleTextArea STA) {
+		string text = textEditBody.GetSelectionText();
+
+		Color c = STA.titleColor;
+		if(c == new Color(1, 1, 1)) {
+		c = new Color((float) new Random().NextDouble(), (float) new Random().NextDouble(), (float) new Random().NextDouble());
+			if(c == new Color(1, 1, 1))
+				c = new Color(1, 0, 0);
+		}
+		
+
+		textEditBody.AddKeywordColor(text, c);
+		hidePanel();
+
+		STA.gotLinked(c, this);
+		STA.nodeReference.moveToPosition();
+		
+		Action goToReference = STA.nodeReference.moveToPosition;
+		links.Add(text, goToReference);
+	}
+
 
     [Obsolete]
     private void updateNodes() {
@@ -100,25 +141,24 @@ public class SimpleTextArea : Control
 		nodes.Clear();
 		foreach (GDD_ObjectNode item in on)
 		{
-			
 			Button node = new Button();
 			Label label = new Label();
 			node.AddChild(label);
 			label.SetText(item.GetName());
 
+
+			Godot.Collections.Array arr = new Godot.Collections.Array();
+			arr.Add(item.reference);
+			node.Connect("pressed", this, "LinkNode", arr);
 			node.Connect("pressed", item, "moveToPosition");
 			if(item.reference != this)
 				nodes.Add(node);
 		}
 
 	}
-
+	    
     [Obsolete]
     public void LinkSelection() {
-		string text = textEditBody.GetSelectionText();
-		textEditBody.AddKeywordColor(text, new  Color(0.5f, 0f, 0.5f));
-
-
 		Panel p = GetNode<Panel>("Panel");
 		p.Visible = true;
 
