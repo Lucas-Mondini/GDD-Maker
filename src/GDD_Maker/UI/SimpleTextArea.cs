@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 public class SimpleTextArea : Control
 {
@@ -126,9 +127,10 @@ public class SimpleTextArea : Control
 
 		STA.gotLinked(c, this);
 		STA.nodeReference.moveToPosition();
-		
+
 		Action goToReference = STA.nodeReference.moveToPosition;
 		links.Add(text, goToReference);
+		linkedWords.Add(text);
 	}
 
 
@@ -159,18 +161,29 @@ public class SimpleTextArea : Control
 	    
     [Obsolete]
     public void LinkSelection() {
-		Panel p = GetNode<Panel>("Panel");
-		p.Visible = true;
+		string text = textEditBody.GetSelectionText();
 
-		updateNodes();
+		if ( Regex.IsMatch( text, @"^[A-Za-z]+$" )) {
+			Panel p = GetNode<Panel>("Panel");
+			p.Visible = true;
 
-		foreach(Button node in nodes)
-			this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(node);
+			updateNodes();
 
+			foreach(Button node in nodes)
+				this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(node);
+
+		}
+		else 
+			GD.PrintErr("Selection is not a word");
 		
+	}
 
-		GD.Print(this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").GetChildCount());
-		
+	private void goToLinkedNode() {
+		linkedWords.ForEach(s => {
+			if(textEditBody.GetWordUnderCursor() == s) {
+				((Action) links[s])();
+			}
+		});
 	}
 
 	private void TextAreaSelected() {
@@ -185,11 +198,19 @@ public class SimpleTextArea : Control
 	{
 		if (@event is InputEventMouseButton eventMouseButton)
 		{
-			if (eventMouseButton.IsPressed() && eventMouseButton.ButtonIndex == ((int)ButtonList.Middle))
+			if (eventMouseButton.IsPressed()) 
 			{
-				isMouseDragBPressed = true;
-				mouseDrag = GetViewport().GetMousePosition();
-				thisInitialPosition = this.GetPosition();
+				switch(eventMouseButton.ButtonIndex) {
+					case (int)ButtonList.Middle:
+						isMouseDragBPressed = true;
+						mouseDrag = GetViewport().GetMousePosition();
+						thisInitialPosition = this.GetPosition();
+						break;
+					case (int)ButtonList.Left :
+						goToLinkedNode();
+						break;
+				}
+				
 			}
 			else {
 				isMouseDragBPressed = false;
