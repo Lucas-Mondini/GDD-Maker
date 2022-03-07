@@ -37,6 +37,7 @@ public class SimpleTextArea : Control
 	public Color titleColor = new Color(1, 1, 1);
 	public Hashtable links = new Hashtable();
 	private List<string> linkedWords = new List<string>();
+	private SimpleTextArea lastNode_From = null;
 
 	public SimpleTextArea()
 	{
@@ -62,6 +63,9 @@ public class SimpleTextArea : Control
 		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLinkedNode").SetDisabled(true);
 
 		hidePanel();
+
+		GetNode<Button>("ButtonsContainer/SimpleTextAreaDisplayLinkedNodes").Connect("pressed", this, "displayLinkedNodes");
+		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLinkedNode").Connect("pressed", this, "");
 
 		
 
@@ -103,11 +107,13 @@ public class SimpleTextArea : Control
 	public void setTitleColor(Color c) {
 		textEditTitle.AddColorOverride("font_color", c);
 		titleColor = c;
+		nodeReference.color = c;
 	}
 
 	public void gotLinked(Color c, SimpleTextArea from) {
 		setTitleColor(c);
 		LinkedNodes.Add(from);
+		lastNode_From = from;
 	}
 
     [Obsolete]
@@ -135,7 +141,7 @@ public class SimpleTextArea : Control
 
 
     [Obsolete]
-    private void updateNodes() {
+    private void updateTextAreaNodes() {
 		List<GDD_ObjectNode> on = nodeReference.parent.getNodes();
 		foreach(Button b in nodes) {
 			b.QueueFree();
@@ -147,6 +153,7 @@ public class SimpleTextArea : Control
 			Label label = new Label();
 			node.AddChild(label);
 			label.SetText(item.GetName());
+			label.AddColorOverride("font_color", item.color);
 
 
 			Godot.Collections.Array arr = new Godot.Collections.Array();
@@ -156,7 +163,42 @@ public class SimpleTextArea : Control
 			if(item.reference != this)
 				nodes.Add(node);
 		}
+	}
 
+    [Obsolete]
+    private void updateTextAreaNodesLinkedOnly() {
+		Godot.Collections.Array buttons = this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").GetChildren();
+
+		foreach(Button b in buttons) {
+			b.QueueFree();
+		}
+		nodes.Clear();
+		List<SimpleTextArea> on = LinkedNodes;
+
+
+		foreach (SimpleTextArea item in on)
+		{
+			Button node = new Button();
+			Label label = new Label();
+			node.AddChild(label);
+			label.SetText(item.GetName());
+			label.AddColorOverride("font_color", item.titleColor);
+
+			node.Connect("pressed", item.nodeReference, "moveToPosition");
+			node.Connect("pressed", this, "hidePanel");
+			this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(node);
+		}
+	}
+
+    [Obsolete]
+    private void displayLinkedNodes() {
+		Panel p = GetNode<Panel>("Panel");
+			p.Visible = true;
+
+			updateTextAreaNodesLinkedOnly();
+
+			foreach(Button node in nodes)
+				this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(node);
 	}
 	    
     [Obsolete]
@@ -167,7 +209,7 @@ public class SimpleTextArea : Control
 			Panel p = GetNode<Panel>("Panel");
 			p.Visible = true;
 
-			updateNodes();
+			updateTextAreaNodes();
 
 			foreach(Button node in nodes)
 				this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").AddChild(node);

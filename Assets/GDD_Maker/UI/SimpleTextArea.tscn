@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://src/GDD_Maker/UI/SimpleTextArea.cs" type="Script" id=1]
 [ext_resource path="res://Assets/GDD_Maker/Sprite Sheets/UI_Button052.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Assets/GDD_Maker/Sprite Sheets/UI_ButtonLink.png" type="Texture" id=4]
 [ext_resource path="res://src/GDD_Maker/UI/SimpleTextAreaLinkButton.cs" type="Script" id=5]
 [ext_resource path="res://Assets/GDD_Maker/Sprite Sheets/UI_Button024.png" type="Texture" id=6]
+[ext_resource path="res://Assets/GDD_Maker/Sprite Sheets/UI_Button028.png" type="Texture" id=7]
 
 [node name="SimpleTextArea" type="Control"]
 anchor_top = -0.064
@@ -82,11 +83,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Button4" type="Button" parent="ButtonsContainer"]
+[node name="SimpleTextAreaDisplayLinkedNodes" type="Button" parent="ButtonsContainer"]
 margin_left = 52.0
 margin_right = 74.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="ButtonsContainer/SimpleTextAreaDisplayLinkedNodes"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+texture = ExtResource( 7 )
+expand = true
+flip_v = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
