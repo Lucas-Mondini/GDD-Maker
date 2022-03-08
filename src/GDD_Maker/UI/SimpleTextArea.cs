@@ -112,7 +112,13 @@ public class SimpleTextArea : Control
 
 	public void gotLinked(Color c, SimpleTextArea from) {
 		setTitleColor(c);
-		LinkedNodes.Add(from);
+		bool isInList = false;
+		LinkedNodes.ForEach(_=> {
+			if(from == _)
+				isInList = true;
+		});
+		if(!isInList)
+			LinkedNodes.Add(from);
 		lastNode_From = from;
 	}
 
@@ -142,10 +148,12 @@ public class SimpleTextArea : Control
 
     [Obsolete]
     private void updateTextAreaNodes() {
-		List<GDD_ObjectNode> on = nodeReference.parent.getNodes();
-		foreach(Button b in nodes) {
+		Godot.Collections.Array buttons = this.GetNode<VBoxContainer>("Panel/ScrollContainer/VBoxContainer").GetChildren();
+		foreach(Button b in buttons) {
 			b.QueueFree();
 		}
+
+		List<GDD_ObjectNode> on = nodeReference.parent.getNodes();
 		nodes.Clear();
 		foreach (GDD_ObjectNode item in on)
 		{
