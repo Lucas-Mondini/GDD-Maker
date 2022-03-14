@@ -64,7 +64,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SimpleTextAreaGoToLinkedNode" type="Button" parent="ButtonsContainer"]
+[node name="SimpleTextAreaGoToLastLinkedNode" type="Button" parent="ButtonsContainer"]
 margin_left = 26.0
 margin_right = 48.0
 margin_bottom = 22.0
@@ -73,7 +73,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="ButtonsContainer/SimpleTextAreaGoToLinkedNode"]
+[node name="TextureRect" type="TextureRect" parent="ButtonsContainer/SimpleTextAreaGoToLastLinkedNode"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true

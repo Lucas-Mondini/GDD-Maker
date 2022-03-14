@@ -60,12 +60,12 @@ public class SimpleTextArea : Control
 		this.SetPosition(new Vector2(OS.GetScreenSize().x / 3 - this.GetSize().x,
 									80));
 
-		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLinkedNode").SetDisabled(true);
+		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLastLinkedNode").SetDisabled(true);
 
 		hidePanel();
 
 		GetNode<Button>("ButtonsContainer/SimpleTextAreaDisplayLinkedNodes").Connect("pressed", this, "displayLinkedNodes");
-		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLinkedNode").Connect("pressed", this, "");
+		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLastLinkedNode").Connect("pressed", this, "goToLastLinkedNode");
 
 		
 
@@ -110,7 +110,8 @@ public class SimpleTextArea : Control
 		nodeReference.color = c;
 	}
 
-	public void gotLinked(Color c, SimpleTextArea from) {
+    [Obsolete]
+    public void gotLinked(Color c, SimpleTextArea from) {
 		setTitleColor(c);
 		bool isInList = false;
 		LinkedNodes.ForEach(_=> {
@@ -120,6 +121,7 @@ public class SimpleTextArea : Control
 		if(!isInList)
 			LinkedNodes.Add(from);
 		lastNode_From = from;
+		GetNode<Button>("ButtonsContainer/SimpleTextAreaGoToLastLinkedNode").SetDisabled(false);
 	}
 
     [Obsolete]
@@ -234,6 +236,12 @@ public class SimpleTextArea : Control
 				((Action) links[s])();
 			}
 		});
+	}
+
+    [Obsolete]
+    private void goToLastLinkedNode() {
+		if(lastNode_From != null)
+			lastNode_From.nodeReference.moveToPosition();
 	}
 
 	private void TextAreaSelected() {
